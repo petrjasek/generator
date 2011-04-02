@@ -49,7 +49,8 @@ class Generator
         $values = $this->getValues($timeId);
         for ($day = 0; $day < 31; $day++) {
             $time = mktime(0, 0, 0, $month, $day + 1, $year);
-            if ($time === FALSE || $time > time()) { // filter invalid date (30.2) and future
+            if (!checkdate($month, $day + 1, $year)
+                || $time > time()) { // filter invalid date (30.2) and future
                 break;
             }
 
