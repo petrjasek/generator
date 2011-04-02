@@ -128,7 +128,7 @@ class Generator
      * @param array $values
      * @return int|false
      */
-    public function setValues($key, array $values)
+    private function setValues($key, array $values)
     {
         return file_put_contents($this->getFilename($key), implode("\n", $values));
     }
