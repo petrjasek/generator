@@ -14,7 +14,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 $month = isset($_GET['month']) ? $_GET['month'] : date('n');
 
 try {
-    $values = $generator->generate($year, $month);
+    list($values, $limit) = $generator->generate($year, $month);
 } catch (InvalidArgumentException $e) {
     echo "Year '$year' or month '$month' not valid.\n";
     exit(1);
@@ -25,6 +25,13 @@ try {
 <head>
     <meta charser="utf-8" />
     <title>Number generator</title>
+    <style>
+        body { padding: 1em; }
+        fieldset { border: 1px solid #ccc; }
+        li { list-style-type: square; margin-bottom: 8px; }
+        li.limit { margin-top: 5px; padding-top: 5px; list-style-type: none; border-top: 3px dashed #ccc; }
+        li:hover { background-color: #efefef; }
+    </style>
 </head>
 <body>
     <h1>Number generator</h1>
@@ -52,10 +59,11 @@ try {
     </form>
 
     <h2><?php echo $year; ?>/<?php echo $month; ?></h2>
-    <ol id="results">
-        <?php foreach ($values as $value) { ?>
-        <li><?php echo $value; ?></li>
+    <ul id="results">
+        <?php foreach ($values as $i => $value) { ?>
+        <li><?php printf('%02d.%d.%d', $i + 1, $month, $year); ?>: <strong><?php printf('%.2f', $value); ?></strong></li>
         <?php } ?>
-    </ol>
+        <li class="limit">Limit: <strong><?php echo $limit; ?></strong></li>
+    </ul>
 </body>
 </html>

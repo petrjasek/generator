@@ -81,7 +81,7 @@ class Generator
         }
 
         $this->setValues($timeId, $values);
-        return $values;
+        return array($values, $limit);
     }
 
     /**
