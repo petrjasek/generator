@@ -10,8 +10,6 @@
  */
 class Config
 {
-    const NUMS = 1000;
-
     /** @var SimpleXMLElement */
     private $xml;
 
@@ -55,15 +53,15 @@ class Config
     {
         $preset = $this->getPreset($year, $month);
 
-        $nums = array();
+        $return = array();
         foreach ($preset->num as $num) {
-            $count = self::NUMS * (float) $num['p'];
-            for ($i = 0; $i < $count; $i++) {
-                $nums[] = (float) $num;
+            $factor = !empty($num['factor']) ? (int) $num['factor'] : 1;
+            for ($i = 0; $i < $factor; $i++) {
+                $return[] = (float) $num;
             }
         }
 
-        return $nums;
+        return $return;
     }
 
     /**
@@ -71,11 +69,11 @@ class Config
      *
      * @param int $year
      * @param int $month
-     * @return SimpleXMLElement
+     * @return SimpleXMLElement|NULL
      */
     private function getPreset($year, $month)
     {
         $search = $this->xml->xpath("//preset[@year=$year][@month=$month]");
-        return $search[0];
+        return !empty($search) ? $search[0] : $this->xml;
     }
 }

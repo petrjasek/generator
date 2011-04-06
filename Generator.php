@@ -73,9 +73,9 @@ class Generator
 
             if (!isset($values[$day])) { // generate
                 $value = 0.0;
-                $count = $limit / $avg / (31 - $day);
+                $count = $limit / $avg / (31 - $day) * (mt_rand(8, 13) / 10.0);
                 for ($i = 0.0; $i < $count; $i++) {
-                    $next = $value + $nums[mt_rand(0, Config::NUMS - 1)];
+                    $next = $value + $nums[mt_rand(0, sizeof($nums) - 1)];
                     if ($next > $limit) { // over limit
                         break;
                     }
