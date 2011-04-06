@@ -45,9 +45,7 @@ class Generator
         // get config
         $limit = $this->config->getLimit($year, $month);
         $nums = $this->config->getNumbers($year, $month);
-        $avg = array_reduce($nums, function($x, $y) {
-            return $x + $y;
-        }) / (float) sizeof($nums);
+        $avg = array_sum($nums) / (float) sizeof($nums);
 
         // get generated values
         $timeId = "$year.$month";
