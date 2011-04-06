@@ -5,4 +5,4 @@ Install:
     chmod o+w data
 
 Setup:
-    edit config.ini
+    edit config.xml
