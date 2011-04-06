@@ -6,8 +6,9 @@
  */
 
 require_once dirname(__FILE__) . '/Generator.php';
+require_once dirname(__FILE__) . '/Config.php';
 
-$config = parse_ini_file(dirname(__FILE__) . '/config.ini');
+$config = new Config(dirname(__FILE__) . '/config.xml');
 $generator = new Generator($config);
 
 $year = isset($_GET['year']) ? $_GET['year'] : date('Y');

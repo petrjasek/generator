@@ -14,15 +14,15 @@ class Generator
 
     const MAX = 2020;
 
-    /** @var array */
-    private $options = array();
+    /** @var Config */
+    private $config;
 
     /**
-     * @param array $options
+     * @param Config $config
      */
-    public function __construct(array $options)
+    public function __construct(Config $config)
     {
-        $this->options = $options;
+        $this->config = $config;
     }
 
     /**
@@ -43,10 +43,16 @@ class Generator
         $month = (int) $month;
 
         // get config
-        $timeId = "$year.$month";
-        list($limit, $numbers) = $this->parseOptions($timeId);
+        $limit = $this->config->getLimit($year, $month);
+        $nums = $this->config->getNumbers($year, $month);
+        $avg = array_reduce($nums, function($x, $y) {
+            return $x + $y;
+        }) / (float) sizeof($nums);
 
+        // get generated values
+        $timeId = "$year.$month";
         $values = $this->getValues($timeId);
+
         for ($day = 0; $day < 31; $day++) {
             $time = mktime(0, 0, 0, $month, $day + 1, $year);
             if (!checkdate($month, $day + 1, $year)
@@ -55,9 +61,8 @@ class Generator
             }
 
             // check for limit change
-            $dayLimitId = implode('.', array($timeId, $day + 1, 'limit'));
-            if (isset($this->options[$dayLimitId])) {
-                $dayLimit = $this->options[$dayLimitId];
+            $dayLimit = $this->config->getLimit($year, $month, $day + 1);
+            if (isset($dayLimit)) {
                 $relative = in_array($dayLimit[0], array('+', '-'));
                 if ($relative) {
                     $limit += (float) $dayLimit;
@@ -66,41 +71,25 @@ class Generator
                 }
             }
 
-            // get value from file or generate
-            $value = isset($values[$day]) ?
-                $values[$day] : $numbers[mt_rand(0, sizeof($numbers) - 1)];
-
-            // check limit
-            if ($limit - $value < 0.0) {
+            if (!isset($values[$day])) { // generate
                 $value = 0.0;
-            } else {
-                $limit -= $value;
+                $count = $limit / $avg / (31 - $day);
+                for ($i = 0.0; $i < $count; $i++) {
+                    $next = $value + $nums[mt_rand(0, Config::NUMS - 1)];
+                    if ($next > $limit) { // over limit
+                        break;
+                    }
+                    $value = $next;
+                }
+
+                $values[$day] = $value;
             }
 
-            $values[$day] = $value;
+            $limit -= $values[$day];
         }
 
         $this->setValues($timeId, $values);
         return array($values, $limit);
-    }
-
-    /**
-     * Parse options
-     *
-     * @param string $key
-     * @param string $default
-     * @return array
-     */
-    private function parseOptions($time, $default = 'default')
-    {
-        $return = array();
-        foreach (array('limit', 'numbers') as $key) {
-            $return[$key] = isset($this->options["$time.$key"]) ?
-                $this->options["$time.$key"] : $this->options["$default.$key"];
-
-        }
-
-        return array((int) $return['limit'], array_map('floatval', $return['numbers']));
     }
 
     /**
