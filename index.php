@@ -64,7 +64,7 @@ try {
         <?php foreach ($values as $i => $value) { ?>
         <li><?php printf('%02d.%d.%d', $i + 1, $month, $year); ?>: <strong><?php printf('%.2f', $value); ?></strong></li>
         <?php } ?>
-        <li class="limit">Limit: <strong><?php echo $limit; ?></strong></li>
+        <li class="limit">Sum: <strong><?php echo array_sum($values); ?></strong></li>
     </ul>
 </body>
 </html>
