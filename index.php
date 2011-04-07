@@ -15,7 +15,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 $month = isset($_GET['month']) ? $_GET['month'] : date('n');
 
 try {
-    list($values, $limit) = $generator->generate($year, $month);
+    $values = $generator->generate($year, $month);
 } catch (InvalidArgumentException $e) {
     echo "Year '$year' or month '$month' not valid.\n";
     exit(1);
@@ -30,7 +30,7 @@ try {
         body { padding: 1em; }
         fieldset { border: 1px solid #ccc; }
         li { list-style-type: square; margin-bottom: 8px; }
-        li.limit { margin-top: 5px; padding-top: 5px; list-style-type: none; border-top: 3px dashed #ccc; }
+        li.sum { margin-top: 5px; padding-top: 5px; list-style-type: none; border-top: 3px dashed #ccc; }
         li:hover { background-color: #efefef; }
     </style>
 </head>
@@ -64,7 +64,7 @@ try {
         <?php foreach ($values as $i => $value) { ?>
         <li><?php printf('%02d.%d.%d', $i + 1, $month, $year); ?>: <strong><?php printf('%.2f', $value); ?></strong></li>
         <?php } ?>
-        <li class="limit">Sum: <strong><?php echo array_sum($values); ?></strong></li>
+        <li class="sum">Sum: <strong><?php echo array_sum($values); ?></strong></li>
     </ul>
 </body>
 </html>
